@@ -1,0 +1,27 @@
+{
+  "groups": [
+    {
+      "name": "log.time",
+      "type": "af.log.core.LogAdvice",
+      "sourceType": "af.log.core.LogAdvice"
+    }
+  ],
+  "properties": [
+    {
+      "name": "log.time.enable-config",
+      "type": "java.lang.Boolean",
+      "sourceType": "af.log.core.LogAdvice"
+    },
+    {
+      "name": "log.time.log-timeout",
+      "type": "af.log.core.LogTimeout",
+      "sourceType": "af.log.core.LogAdvice"
+    },
+    {
+      "name": "log.time.pale",
+      "type": "java.lang.Integer",
+      "sourceType": "af.log.core.LogAdvice"
+    }
+  ],
+  "hints": []
+}
