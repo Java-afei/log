@@ -2,6 +2,8 @@
 
 ## 1.基本使用
 
+在启动上加上**@ComponentScan(basePackages = {"af.*","自己的项目包"})**
+
 首先在需要统计时间的接口上加上@LogTime注解
 
 **@LogTime属性：**
