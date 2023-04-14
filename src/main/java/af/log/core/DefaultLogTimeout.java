@@ -19,7 +19,6 @@ public class DefaultLogTimeout implements LogTimeout{
 
     @Override
     public void handle(Method method,long time,String methodTag,long fix) {
-//        log.info("默认的处理方法执行");
         longAdder.increment();
         TimeOutLog timeOutLog = new TimeOutLog();
         timeOutLog.setTime(time);
@@ -29,6 +28,5 @@ public class DefaultLogTimeout implements LogTimeout{
         timeOutLog.setFixTime(fix);
         timeOutLog.setDate(DateFormatUtils.getFormat());
         map.put(id,timeOutLog);
-//        System.out.println(map);
     }
 }

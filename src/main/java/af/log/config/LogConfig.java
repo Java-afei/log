@@ -1,6 +1,8 @@
 package af.log.config;
 
 import af.log.common.TimeOutLog;
+import af.log.controller.MonitorService;
+import af.log.controller.MonitorServiceImpl;
 import af.log.core.DefaultLogTimeout;
 import af.log.core.LogTimeout;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,5 +35,11 @@ public class LogConfig {
     @Bean
     public LongAdder setNum(){
         return new LongAdder();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public MonitorService saveBean(){
+        return new MonitorServiceImpl();
     }
 }
