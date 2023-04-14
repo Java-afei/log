@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>log管理</title>
+
+    <style>
+        /*表格*/
+        .demo-table-expand {
+            font-size: 0;
+        }
+        .demo-table-expand label {
+            width: 90px;
+            color: #99a9bf;
+        }
+        .demo-table-expand .el-form-item {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!--查询表单条-->
+        <el-form :inline="true" :model="username" class="demo-form-inline">
+            <el-form-item>
+                <h3>接口超时日志管控台</h3>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="danger" @click="onsubmit">退出登录</el-button>
+            </el-form-item>
+        </el-form>
+            <template>
+                <el-table
+                        :data="tableData"
+                        style="width: 100%;font-size: 10px">
+                    <el-table-column
+                            prop="methodName"
+                            label="方法标签名"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            prop="date"
+                            label="记录时间"
+                            align="center">
+                    </el-table-column>
+                    <el-table-column
+                            label="规定执行用时"
+                            align="center">
+                        <template slot-scope="scope">
+                            <span>{{scope.row.fixTime}}毫秒</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="实际执行用时"
+                            align="center">
+                        <template slot-scope="scope">
+                            <span>{{scope.row.time}}毫秒</span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
+                            label="操作"
+                            align="center">
+                        <template slot-scope="scope">
+                            <el-button type="success" @click="sus(scope.row)" size="mini">已解决</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </template>
+        <!--分页工具条-->
+        <div class="block">
+            <el-pagination
+                    background
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page.sync="currentPage"
+                    :page-sizes="[5,10,20]"
+                    layout="total,sizes,prev, pager, next, jumper"
+                    :total="counts">
+            </el-pagination>
+        </div>
+    </div>
+
+    <script src="../js/vue.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+
+    <script src="../element/lib/index.js"></script>
+    <link rel="stylesheet" href="../element/lib/theme-chalk/index.css">
+    <!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+    <script>
+        new Vue({
+            el:"#app",
+            mounted(){
+                this.queryAllLog();
+                this.loopQueryLog();
+            },
+            methods:{
+                onsubmit(){
+                    var _this=this;
+                    axios({
+                        method: "delete",
+                        url: "/af/log/admin/logout"
+                    }).then((resp)=>{
+                        if(resp.data.code!=200){
+                            _this.$message({
+                                message: resp.data.msg,
+                                type: 'error'
+                            });
+                        }
+                        self.location="login.html";
+                    });
+                },
+                queryAllLog() {
+                    var _this=this;
+                    axios({
+                        method:"get",
+                        url:"/af/log/admin/query/"+this.currentPage+"/"+this.size,
+                    }).then(function (resp){
+                        if(resp.data.code==200){
+                            _this.tableData=resp.data.data.list;
+                            _this.counts=resp.data.data.num;
+                        }else {
+                            _this.$message({
+                                message: resp.data.msg,
+                                type: 'error'
+                            });
+                        }
+                    })
+                },
+                sus(row){
+                    var _this=this;
+                    axios({
+                        method:"put",
+                        url:"/af/log/admin/remove/"+row.id
+                    }).then(function (resp){
+                        if(resp.data.code==200){
+                            _this.$message({
+                                message: 'OK',
+                                type: 'success'
+                            });
+                            _this.queryAllLog();
+                        }else {
+                            _this.$message({
+                                message: resp.data.msg,
+                                type: 'error'
+                            });
+                        }
+                    })
+                },
+                loopQueryLog(){
+                    var _this=this;
+                    setInterval(()=>{
+                        axios({
+                            method:"get",
+                            url:"/af/log/admin/new-log/"+this.counts
+                        }).then(function (resp){
+                            if(resp.data.code==200){
+                                _this.$notify({
+                                    title: resp.data.msg,
+                                    message: "最后一条日志是："+resp.data.data.methodName+"方法，用时："
+                                        +resp.data.data.time+"毫秒！",
+                                });
+                                _this.queryAllLog();
+                            }
+                        })
+                    },5000);
+                },
+                /*分页工具条*/
+                handleSizeChange(val) {
+                    console.log(`每页 ${val} 条`);
+                    this.size=val;
+                    this.queryAllLog();
+                },
+                handleCurrentChange(val) {
+                    this.currentPage=val;
+                    this.queryAllLog();
+                },
+            },
+            data(){
+                return{
+                    //
+                    flag:true,
+                    //表格
+                    tableData: [],
+                    //test
+                    arraylist:[],
+                    //分页0
+                    counts:10,
+                    currentPage:1,
+                    size: 5
+                }
+            }
+      })
+    </script>
+</body>
+</html>

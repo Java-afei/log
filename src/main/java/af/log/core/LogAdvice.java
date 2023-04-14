@@ -58,17 +58,15 @@ public class LogAdvice {
         if(methodMaxRT!=-1l && (end-start)>=methodMaxRT){
             log.error("{}该接口响应时间超出预期,需引起注意,时间为：{}毫秒",
                     methodTag==""? classTag : methodTag,end-start);
-            logTimeout.handle(method,end-start);
+            logTimeout.handle(method,end-start,methodTag,methodMaxRT);
         }else if(classMaxRT!=-1l && (end-start)>=classMaxRT){
             log.error("{}该接口响应时间超出预期,需引起注意,时间为：{}毫秒",
                     methodTag==""? classTag : methodTag,end-start);
-            logTimeout.handle(method,end-start);
-        }
-        if(enableConfig && (end-start)>=pale*1l){
+            logTimeout.handle(method,end-start,methodTag,classMaxRT);
+        }else if(enableConfig && (end-start)>=pale*1L){
             log.error("{}该接口响应时间超出预期,需引起注意,时间为：{}毫秒",
                     methodTag==""? classTag : methodTag,end-start);
-            logTimeout.handle(method,end-start);
-
+            logTimeout.handle(method,end-start,methodTag,pale*1L);
         }
         return result;
     }

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link href="../css/login.css" rel="stylesheet">
+</head>
+
+<body>
+<div id="loginDiv" style="height: 350px">
+    <form id="form">
+        <h1 id="loginMsg">登陆</h1>
+        <div id="errorMsg" v-if="flg">用户名或密码不正确</div>
+        <p>用户名:<input id="username" :value="formdata.username" type="text" focus="true"
+                      v-model="formdata.username" @keyup.enter="enter" spellcheck="false"></p>
+
+        <p>密码:&nbsp;&nbsp;&nbsp;&nbsp;<input
+                id="password"
+                :value="formdata.password"
+                type="password"
+                v-model="formdata.password" @keyup.enter="enter"></p>
+        <div id="subDiv">
+            <!--<input type="submit" class="button" value="登录" @click="sign">-->
+            <el-button type="primary" @click="sign">登录</el-button>
+            <!--<input type="reset" class="button" value="重置">&nbsp;&nbsp;&nbsp;-->
+            <el-button type="primary" @click="reset">重置</el-button>
+        </div>
+    </form>
+</div>
+
+
+
+<script src="../js/vue.js"></script>
+<script src="../js/axios-0.18.0.js"></script>
+<script src="../element/lib/index.js"></script>
+<link rel="stylesheet" href="../element/lib/theme-chalk/index.css">
+
+<!--<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+<script>
+    new Vue({
+        el:"#loginDiv",
+        mounted(){
+            document.getElementById("username").focus();
+        },
+        methods:{
+            //回车登录
+            enter(){
+                var _this=this;
+                axios({
+                    method:"post",
+                    url:"/af/log/admin/login",
+                    data: this.formdata
+                }).then(function (resp){
+                    if(resp.data.code==200){
+                        self.location="home.html";
+                    }else {
+                        _this.flg=true;
+                    }
+                })
+            },
+            sign(){
+                var _this=this;
+                axios({
+                    method:"post",
+                    url:"/af/log/admin/login",
+                    data: this.formdata
+                }).then(function (resp){
+                    if(resp.data.code==200){
+                        self.location="home.html";
+                    }else {
+                        _this.flg=true;
+                    }
+                })
+            },
+            reset(){
+                var text= "恭喜您刷新成功"
+                var voice = new SpeechSynthesisUtterance(text);
+                //音量
+                voice.volume=20;
+                //语速
+                voice.rate=0.8;
+                //播放
+                window.speechSynthesis.speak(voice);
+                this.flg=false;
+                this.formdata.username="";
+                this.formdata.password="";
+
+            }
+        },
+        data(){
+            return{
+                flg:false,
+                formdata:{
+                    username:"",
+                    password:"",
+                },
+            }
+        }
+
+    })
+</script>
+
+</body>
+</html>

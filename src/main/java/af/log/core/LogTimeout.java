@@ -4,5 +4,5 @@ import java.lang.reflect.Method;
 
 public interface LogTimeout {
 
-    void handle(Method method,long time);
+    void handle(Method method,long time,String methodTag,long fix);
 }
